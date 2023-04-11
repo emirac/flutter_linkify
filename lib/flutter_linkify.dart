@@ -1,6 +1,5 @@
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/rendering.dart';
 import 'package:linkify/linkify.dart';
 
 export 'package:linkify/linkify.dart'
@@ -54,9 +53,6 @@ class Linkify extends StatelessWidget {
   /// How visual overflow should be handled.
   final TextOverflow overflow;
 
-  /// The number of font pixels for each logical pixel
-  final double textScaleFactor;
-
   /// Whether the text should break at soft line breaks.
   final bool softWrap;
 
@@ -87,7 +83,6 @@ class Linkify extends StatelessWidget {
     this.textDirection,
     this.maxLines,
     this.overflow = TextOverflow.clip,
-    this.textScaleFactor = 1.0,
     this.softWrap = true,
     this.strutStyle,
     this.locale,
@@ -106,12 +101,11 @@ class Linkify extends StatelessWidget {
     return Text.rich(
       buildTextSpan(
         elements,
-        style: Theme.of(context).textTheme.bodyText2?.merge(style),
+        style: Theme.of(context).textTheme.bodyMedium?.merge(style),
         onOpen: onOpen,
-        useMouseRegion: true,
         linkStyle: Theme.of(context)
             .textTheme
-            .bodyText2
+            .bodyMedium
             ?.merge(style)
             .copyWith(
               color: Colors.blueAccent,
@@ -123,7 +117,6 @@ class Linkify extends StatelessWidget {
       textDirection: textDirection,
       maxLines: maxLines,
       overflow: overflow,
-      textScaleFactor: textScaleFactor,
       softWrap: softWrap,
       strutStyle: strutStyle,
       locale: locale,
@@ -137,9 +130,6 @@ class Linkify extends StatelessWidget {
 class SelectableLinkify extends StatelessWidget {
   /// Text to be linkified
   final String text;
-
-  /// The number of font pixels for each logical pixel
-  final textScaleFactor;
 
   /// Linkifiers to be used for linkify
   final List<Linkifier> linkifiers;
@@ -190,7 +180,7 @@ class SelectableLinkify extends StatelessWidget {
   final bool autofocus;
 
   /// Configuration of toolbar options
-  final ToolbarOptions? toolbarOptions;
+  final EditableTextContextMenuBuilder? contextMenuBuilder;
 
   /// How thick the cursor will be
   final double cursorWidth;
@@ -241,11 +231,10 @@ class SelectableLinkify extends StatelessWidget {
     this.maxLines,
     // SelectableText
     this.focusNode,
-    this.textScaleFactor = 1.0,
     this.strutStyle,
     this.showCursor = false,
     this.autofocus = false,
-    this.toolbarOptions,
+    this.contextMenuBuilder,
     this.cursorWidth = 2.0,
     this.cursorRadius,
     this.cursorColor,
@@ -271,11 +260,11 @@ class SelectableLinkify extends StatelessWidget {
     return SelectableText.rich(
       buildTextSpan(
         elements,
-        style: Theme.of(context).textTheme.bodyText2?.merge(style),
+        style: Theme.of(context).textTheme.bodyMedium?.merge(style),
         onOpen: onOpen,
         linkStyle: Theme.of(context)
             .textTheme
-            .bodyText2
+            .bodyMedium
             ?.merge(style)
             .copyWith(
               color: Colors.blueAccent,
@@ -290,9 +279,8 @@ class SelectableLinkify extends StatelessWidget {
       focusNode: focusNode,
       strutStyle: strutStyle,
       showCursor: showCursor,
-      textScaleFactor: textScaleFactor,
       autofocus: autofocus,
-      toolbarOptions: toolbarOptions,
+      contextMenuBuilder: contextMenuBuilder,
       cursorWidth: cursorWidth,
       cursorRadius: cursorRadius,
       cursorColor: cursorColor,
@@ -341,14 +329,18 @@ TextSpan buildTextSpan(
               inlineSpan: TextSpan(
                 text: element.text,
                 style: linkStyle,
-                recognizer: onOpen != null ? (TapGestureRecognizer()..onTap = () => onOpen(element)) : null,
+                recognizer: onOpen != null
+                    ? (TapGestureRecognizer()..onTap = () => onOpen(element))
+                    : null,
               ),
             );
           } else {
             return TextSpan(
               text: element.text,
               style: linkStyle,
-              recognizer: onOpen != null ? (TapGestureRecognizer()..onTap = () => onOpen(element)) : null,
+              recognizer: onOpen != null
+                  ? (TapGestureRecognizer()..onTap = () => onOpen(element))
+                  : null,
             );
           }
         } else {
